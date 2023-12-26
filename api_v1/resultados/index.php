@@ -7,47 +7,39 @@ include('../FuncionesGenerales.php');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle POST request
 } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    if (isset($_GET['id_sorteo'])) {
-        if (is_array($_GET['id_sorteo'])) {
-            if (validar_array($_GET['id_sorteo'])) {
-                $id_sorteo = $_GET['id_sorteo'];
+    if (isset($_GET['tipo_sorteo'])) {
 
-                $fecha_actual = date("Y-m-d");
+        if (validar_int($_GET['tipo_sorteo'])) {
+            $tipo_sorteo = $_GET['tipo_sorteo'];
+
+            $fecha_actual = date("Y-m-d");
+            // $consulta = "EXEC web_consulta_semanal";
+            $consulta = "
+
+                SELECT
+                    IFNULL(c3.ganador,'Pendiente') as ganador,
+                    IFNULL(c3.descripcion,'Pendiente') as descripcion,
+                    c2.sorteo,
+                    c1.id_sorteo,
+                    c1.nombre,
+                    c2.cod_sorteo 
+                FROM
+                    id_sorteos c1
+                    INNER JOIN sorteos c2 ON c2.id_sorteo = c1.id_sorteo and c2.activo = '1'
+                    INNER JOIN premios c3 ON c3.cod_sorteo = c2.cod_sorteo AND c3.fecha = '2023-12-21'
+                WHERE c1.tipo = '$tipo_sorteo' AND C1.activo = '1'
+                ORDER BY c1.orden asc, c1.id_sorteo asc, c2.hora desc";
+
+
+
+            $resultados = mysqli_query($conexion, $consulta);
+
+            if ($resultados) {
                 $consulta_data = [];
-                for ($i = 0; $i < count($id_sorteo); $i++) {
-                    $consulta = "
-                        SELECT
-                        premios.ganador,
-                        premios.descripcion,
-                        sorteos.sorteo,
-                        id_sorteos.id_sorteo,
-                        id_sorteos.nombre,
-                        sorteos.cod_sorteo 
-                    FROM
-                        id_sorteos
-                        INNER JOIN sorteos ON sorteos.id_sorteo = id_sorteos.id_sorteo
-                        INNER JOIN premios ON premios.cod_sorteo = sorteos.cod_sorteo 
-                    WHERE
-                        premios.fecha = '$fecha_actual' 
-                        AND id_sorteos.id_sorteo = '$id_sorteo[$i]'
-                        ";
-                    $resultados = mysqli_query($conexion, $consulta);
-
-                    if ($resultados) {
-
-                        while ($row = mysqli_fetch_array($resultados, MYSQLI_ASSOC)) {
-                            array_push($consulta_data, $row);
-                        }
-                    } else {
-                        $resultado = new stdClass();
-                        $resultado->result = FALSE;
-                        $resultado->icono = "error";
-                        $resultado->titulo = "Error!";
-                        $resultado->mensaje = 'Error Interno';
-                        echo json_encode($resultado);
-                        return;
-                    }
+                while ($row = mysqli_fetch_array($resultados, MYSQLI_ASSOC)) {
+                    array_push($consulta_data, $row);
                 }
+
 
 
                 $resultado = new stdClass();
@@ -60,73 +52,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 return;
             } else {
                 $resultado = new stdClass();
-                $resultado->result = false;
+                $resultado->result = FALSE;
                 $resultado->icono = "error";
                 $resultado->titulo = "Error!";
-                $resultado->mensaje = 'Un Sorteo del Array no Es Valido';
+                $resultado->mensaje = 'Error Interno';
                 echo json_encode($resultado);
                 return;
             }
         } else {
-            if (validar_int($_GET['id_sorteo'])) {
-                $id_sorteo = $_GET['id_sorteo'];
-
-                $fecha_actual = date("Y-m-d");
-                // $consulta = "EXEC web_consulta_semanal";
-                $consulta = "
-					SELECT
-					premios.ganador,
-					premios.descripcion,
-					sorteos.sorteo,
-					id_sorteos.id_sorteo,
-					id_sorteos.nombre,
-					sorteos.cod_sorteo 
-				FROM
-					id_sorteos
-					INNER JOIN sorteos ON sorteos.id_sorteo = id_sorteos.id_sorteo
-					INNER JOIN premios ON premios.cod_sorteo = sorteos.cod_sorteo 
-				WHERE
-					premios.fecha = '$fecha_actual' 
-					AND id_sorteos.id_sorteo = '$id_sorteo'
-					";
-
-
-
-
-                $resultados = mysqli_query($conexion, $consulta);
-
-                if ($resultados) {
-                    $consulta_data = [];
-                    while ($row = mysqli_fetch_array($resultados, MYSQLI_ASSOC)) {
-                        array_push($consulta_data, $row);
-                    }
-
-                    $resultado = new stdClass();
-                    $resultado->result = TRUE;
-                    $resultado->icono = "success";
-                    $resultado->titulo = "";
-                    $resultado->mensaje = "";
-                    $resultado->data = $consulta_data;
-                    echo  json_encode($resultado);
-                    return;
-                } else {
-                    $resultado = new stdClass();
-                    $resultado->result = FALSE;
-                    $resultado->icono = "error";
-                    $resultado->titulo = "Error!";
-                    $resultado->mensaje = 'Error Interno';
-                    echo json_encode($resultado);
-                    return;
-                }
-            } else {
-                $resultado = new stdClass();
-                $resultado->result = false;
-                $resultado->icono = "error";
-                $resultado->titulo = "Error!";
-                $resultado->mensaje = 'Sorteo no Valido';
-                echo json_encode($resultado);
-                return;
-            }
+            $resultado = new stdClass();
+            $resultado->result = false;
+            $resultado->icono = "error";
+            $resultado->titulo = "Error!";
+            $resultado->mensaje = 'Sorteo no Valido';
+            echo json_encode($resultado);
+            return;
         }
     } else {
         $resultado = new stdClass();
@@ -145,14 +85,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $resultado->mensaje = 'Parametro No Valido';
     echo json_encode($resultado);
     return;
-}
-
-function validar_array($arr)
-{
-    foreach ($arr as $valor) {
-        if (!validar_int($valor)) {
-            return false;
-        }
-    }
-    return true;
 }
