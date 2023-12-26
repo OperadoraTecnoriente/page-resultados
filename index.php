@@ -428,6 +428,7 @@
         $(document).ready(() => {
             consultar_resultados(1);
         })
+        let datosAgrupados = [];
 
         function consultar_resultados(tipo) {
             $.ajax({
@@ -545,7 +546,7 @@
                     }
 
                     // Objeto para almacenar los resultados agrupados por nombre
-                    const datosAgrupados = datos.reduce((agrupados, dato) => {
+                    datosAgrupados = datos.reduce((agrupados, dato) => {
                         const {
                             nombre
                         } = dato;
@@ -593,6 +594,8 @@
                                 hora_sorteo = hora_sorteo.split(" ");
                                 hora_sorteo = hora_sorteo[1];
 
+
+
                                 let ganador = valor.ganador == "Pendiente" ? 'sin_resultado' : valor.ganador;
 
 
@@ -623,24 +626,37 @@
                                                         <div role="presentation">
                                                             <div>
                                                                 <div class="m-2">
-                                                                    <div class="flex items-center">
-                                                                        <div class="mr-2">
-                                                                            <a target="_blank">
-                                                                                <img class="[ rounded-full w-16 object-cover ] [ md:w-16 ] [ lg:w-[40px] ]"
-                                                                                onerror="this.onerror=null;this.src='https://placehold.jp/616161/ffffff/60x60.png?text=${nombre_sorteo.charAt(0)}';" src="./src/img/${nombre_sorteo_modificado}.png" alt="hagnerd profile" loading="lazy">
-                                                                            </a>
-                                                                        </div>
-                                                                        <div>
-                                                                            <p>
-                                                                                <a class="text text-gray-700 text-sm hover:text-black" target="_blank">${nombre_sorteo}</a>
-                                                                            </p>
-                                                                            <!--------
-                                                                            <a class="text-xs text-gray-600 hover:text-black" target="_blank">
-                                                                                <time datetime="2019-08-02T13:58:42.196Z">13/12/2023
-                                                                                </time>
-                                                                            </a>
-                                                                            ---->
-                                                                        </div>
+                                                                    <div class="flex items-center justify-between">
+                                                                        <div class='[ flex flex-nowrap items-center ]'>
+                                                                            <div class="mr-2">
+                                                                                <a target="_blank">
+                                                                                    <img class="[ rounded-full w-16 object-cover ] [ md:w-16 ] [ lg:w-[40px] ]"
+                                                                                    onerror="this.onerror=null;this.src='https://placehold.jp/616161/ffffff/60x60.png?text=${nombre_sorteo.charAt(0)}';" src="./src/img/${nombre_sorteo_modificado}.png" alt="hagnerd profile" loading="lazy">
+                                                                                </a>
+                                                                            </div>
+                                                                            <div>
+                                                                                <p>
+                                                                                    <a class="text text-gray-700 text-sm hover:text-black" target="_blank">${nombre_sorteo}</a>
+                                                                                </p>
+                                                                                <!--------
+                                                                                <a class="text-xs text-gray-600 hover:text-black" target="_blank">
+                                                                                    <time datetime="2019-08-02T13:58:42.196Z">13/12/2023
+                                                                                    </time>
+                                                                                </a>
+                                                                                ---->
+                                                                            </div>
+                                                                        </div>   
+                                                                        <a href="javascript:ShareResult('${nombre_sorteo}')" class="[ flex flex-nowrap items-center ]">
+                                                                         
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                                                class="h-6 w-6">
+                                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                                    d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z">
+                                                                                </path>
+                                                                            </svg>
+                                                                       
+                                                                           
+                                                                        </a>
                                                                     </div>
                                                                 </div>
                                                                 <div class="[  p-5  ] [ xs:pl-10 ] [ md:pl-10 md:pl-12 ] [ lg:pl-10 lg:pl-12 ]">
@@ -667,6 +683,12 @@
                             let hijos_resultados = '';
 
                             let nombre_sorteo = clave;
+
+
+                            var subcadenas = nombre_sorteo.split(" "); // Divide la cadena en un array de subcadenas
+                            var nombre_sorteo_modificado = subcadenas.join(""); // Une las subcadenas sin espacios
+
+
                             const valores = datosAgrupados[clave];
 
                             // Crear divs con la estructura proporcionada para cada valor de la clave
@@ -692,11 +714,24 @@
                             hijos_resultados += divsHijos;
 
                             templateFinal += `
-                                    <div class="block rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]">
-                                <div class="flex w-full flex-row flex-nowrap items-center gap-3 border-b-2 ">
-                                    <img src="https://placehold.jp/616161/ffffff/120x120.png?text=${nombre_sorteo.charAt(0)}" class="w-20" alt="" />
-                                    <h5 class="border-neutral-100 px-6 py-3 text-xl font-medium leading-tight">${nombre_sorteo}</h5>
-                                </div>
+                                <div class="block rounded-lg  bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]">
+                                    <div class="h-20 p-3 flex w-full flex-row justify-between flex-nowrap items-center gap-3 border-b-2 ">
+                                        
+                                        <img onerror="this.onerror=null;this.src='https://placehold.jp/616161/ffffff/60x60.png?text=${nombre_sorteo.charAt(0)}';" src="./src/img/${nombre_sorteo_modificado}.png"   loading="lazy" class="w-20" alt="${nombre_sorteo}" />
+                                        <h5 class="border-neutral-100 px-6 py-3 text-xl mx-auto font-medium leading-tight">${nombre_sorteo}</h5>
+
+                                        <a href="javascript:ShareResult('${nombre_sorteo}')" class="[ flex flex-nowrap items-center ]">
+
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                class="h-6 w-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z">
+                                                </path>
+                                            </svg>
+
+
+                                        </a>
+                                    </div>
                                 <div class="p-6">
                                     <table class="min-w-full text-center text-sm font-light">
                                     <thead class="border-b font-medium">
@@ -725,7 +760,8 @@
 
                             let nombre_sorteo = clave;
                             const valores = datosAgrupados[clave];
-
+                            var subcadenas = nombre_sorteo.split(" "); // Divide la cadena en un array de subcadenas
+                            var nombre_sorteo_modificado = subcadenas.join(""); // Une las subcadenas sin espacios
                             // Crear divs con la estructura proporcionada para cada valor de la clave
 
 
@@ -765,7 +801,11 @@
                                 <div class="relative block  rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]">
                                     <div class="h-[110px] overflow-hidden bg-gradient-to-r from-blue-300 via-blue-400 to-blue-500">
                                         <div class="absolute flex w-full flex-nowrap items-center gap-3 p-3">
-                                    <img onerror="this.onerror=null;this.src='https://placehold.jp/616161/ffffff/120x120.png?text=${nombre_sorteo.charAt(0)}';" src="./src/img/${nombre_sorteo}.png"  class="h-20 w-20 object-cover" alt="img" loading="lazy">
+
+                                      
+
+
+                                    <img onerror="this.onerror=null;this.src='https://placehold.jp/616161/ffffff/60x60.png?text=${nombre_sorteo.charAt(0)}';" src="./src/img/${nombre_sorteo_modificado}.png"   loading="lazy"  class="h-20   object-cover" alt="img" loading="lazy">
                                         <h5 class="text-xl font-medium leading-tight text-black">${nombre_sorteo}</h5>
                                         </div>
                                     </div>
@@ -786,7 +826,14 @@
                                     </div>
 
                                     <div class="w-full p-3 text-center">
-                                        <a href="#" class="w-full p-3 text-center text-blue-600 hover:underline">${nombre_sorteo}</a>
+                                    <a href="javascript:ShareResult('${nombre_sorteo}')" class="[ flex flex-nowrap items-center justify-center ]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                            class="h-6 w-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z">
+                                            </path>
+                                        </svg>
+                                    </a>
                                     </div>
                                     <hr class="my-3 h-px border-0 bg-gray-200" />
                                 </div>`;
@@ -806,6 +853,28 @@
                     console.log("No se ha podido obtener la información");
                 }
             });
+        }
+
+        function ShareResult(nombre_sorteo) {
+
+            let hijos = datosAgrupados[nombre_sorteo];
+            let title = hijos[0].nombre;
+            let templateResult = "";
+
+            for (let index = 0; index < hijos.length; index++) {
+                let hora_sorteo = hijos[index].sorteo;
+                let palabras = hora_sorteo.split(" "); // Dividir la cadena en palabras
+                let hora = palabras[1]; // Obtener la hora del sorteo
+                templateResult += `${hora} - ${hijos[index].ganador +" "+ hijos[index].descripcion } \n`;
+            }
+
+            var plantilla = `${title} \nResultados: \n${templateResult}`;
+
+            navigator.share({
+                title: "Resultados",
+                text: plantilla,
+                url: window.location.href
+            }).then(() => console.log('Successful share')).catch((error) => console.log('Error sharing', error));
         }
     </script>
 

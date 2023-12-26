@@ -15,20 +15,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $fecha_actual = date("Y-m-d");
             // $consulta = "EXEC web_consulta_semanal";
             $consulta = "
+            (SELECT
+            IFNULL( c3.ganador, 'Pendiente' ) AS ganador,
+            IFNULL( c3.descripcion, 'Pendiente' ) AS descripcion,
+            c2.sorteo,
+            c1.id_sorteo,
+            c1.nombre,
+            c2.cod_sorteo 
+        FROM
+            id_sorteos c1
+            INNER JOIN sorteos c2 ON c2.id_sorteo = c1.id_sorteo AND c2.activo = '1'
+            INNER JOIN premios c3 ON c3.cod_sorteo = c2.cod_sorteo AND c3.fecha = DATE( NOW( ) ) 
+        WHERE
+            c1.tipo = $tipo_sorteo AND C1.activo = '1' and orden > 0
+        ORDER BY
+            c1.orden ASC,
+            c1.id_sorteo ASC,
+            c2.hora DESC)
+            UNION
+            (SELECT
+            IFNULL( c3.ganador, 'Pendiente' ) AS ganador,
+            IFNULL( c3.descripcion, 'Pendiente' ) AS descripcion,
+            c2.sorteo,
+            c1.id_sorteo,
+            c1.nombre,
+            c2.cod_sorteo 
+        FROM
+            id_sorteos c1
+            INNER JOIN sorteos c2 ON c2.id_sorteo = c1.id_sorteo AND c2.activo = '1'
+            INNER JOIN premios c3 ON c3.cod_sorteo = c2.cod_sorteo AND c3.fecha = DATE( NOW( ) ) 
+        WHERE
+            c1.tipo = $tipo_sorteo AND C1.activo = '1' and orden IS NULL
+        ORDER BY
+            c1.orden ASC,
+            c1.id_sorteo ASC,
+            c2.hora DESC)
 
-                SELECT
-                    IFNULL(c3.ganador,'Pendiente') as ganador,
-                    IFNULL(c3.descripcion,'Pendiente') as descripcion,
-                    c2.sorteo,
-                    c1.id_sorteo,
-                    c1.nombre,
-                    c2.cod_sorteo 
-                FROM
-                    id_sorteos c1
-                    INNER JOIN sorteos c2 ON c2.id_sorteo = c1.id_sorteo and c2.activo = '1'
-                    INNER JOIN premios c3 ON c3.cod_sorteo = c2.cod_sorteo AND c3.fecha = DATE(NOW())
-                WHERE c1.tipo = '$tipo_sorteo' AND C1.activo = '1'
-                ORDER BY c1.orden asc, c1.id_sorteo asc, c2.hora desc";
+          ";
 
 
 
