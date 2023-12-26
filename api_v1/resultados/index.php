@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 FROM
                     id_sorteos c1
                     INNER JOIN sorteos c2 ON c2.id_sorteo = c1.id_sorteo and c2.activo = '1'
-                    INNER JOIN premios c3 ON c3.cod_sorteo = c2.cod_sorteo AND c3.fecha = '2023-12-21'
+                    INNER JOIN premios c3 ON c3.cod_sorteo = c2.cod_sorteo AND c3.fecha = DATE(NOW())
                 WHERE c1.tipo = '$tipo_sorteo' AND C1.activo = '1'
                 ORDER BY c1.orden asc, c1.id_sorteo asc, c2.hora desc";
 
