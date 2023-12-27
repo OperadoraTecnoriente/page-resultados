@@ -865,10 +865,10 @@
                 let hora_sorteo = hijos[index].sorteo;
                 let palabras = hora_sorteo.split(" "); // Dividir la cadena en palabras
                 let hora = palabras[1]; // Obtener la hora del sorteo
-                templateResult += `${hora} - ${hijos[index].ganador +" "+ hijos[index].descripcion } \n`;
+                templateResult += `${hora} - ${hijos[index].ganador +" "+ hijos[index].descripcion + " ✅" } \n`;
             }
 
-            var plantilla = `${title} \nResultados: \n${templateResult}`;
+            var plantilla = `---------------------------${title}---------------------------\n${templateResult} ----------------------------------------------------------------------------\n ¡Visita nuestro Sitio! \n`;
 
             navigator.share({
                 title: "Resultados",
